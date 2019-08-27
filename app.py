@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, flash, session
 from models import db, connect_db, User
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, FeedbackForm
 
 
 app = Flask(__name__)
@@ -34,20 +34,17 @@ def register_user():
         first_name = form.first_name.data
         last_name = form.last_name.data
 
-        new_user = User(username=username,
-                        password=password,
-                        email=email,
-                        first_name=first_name,
-                        last_name=last_name)
+        new_user = User.register(username=username,
+                                 password=password,
+                                 email=email,
+                                 first_name=first_name,
+                                 last_name=last_name)
         db.session.add(new_user)
-
-        user_credentials = User.register(username, password)
-        db.session.add(user_credentials)
 
         db.session.commit()
 
         flash(f"Congrats, {first_name}! You have succesfully registered!")
-        return redirect("/secret")  # USER'S HOMEPAGE, ONCE LOGGED IN
+        return redirect(f"/users/{new_user.username}")  # USER'S HOMEPAGE, ONCE LOGGED IN
     else:
         return render_template("register.html", form=form)
 
@@ -66,22 +63,23 @@ def login_user():
 
         if user:
             session["username"] = user.username
-            return redirect("/secret")
+            return redirect(f"/users/{user.username}")
         else:
             form.username.errors = ["Incorrect User Name or Password!"]
 
     return render_template("login.html", form=form)
 
 
-@app.route("/secret")
-def secret():
-    """Renders the user's homepage."""
+@app.route("/users/<username>")
+def user_page(username):
+    """ displays user's homepage. """
 
     if "username" not in session:
-        # flash("You must login first!")
+        flash("You must login first!")
         return redirect("/")
     else:
-        return render_template("secret.html")
+        user_info = User.query.get_or_404(username)
+        return render_template("user.html", user_info=user_info)
 
 
 @app.route("/logout")
@@ -91,3 +89,43 @@ def logout():
     session.pop("username")
 
     return redirect("/")
+
+
+@app.route("/users/<username>/delete")
+def delete_user(username):
+    """ deletes a user. """
+
+    if "username" not in session:
+        flash("You must login first!")
+        return redirect("/")
+    else:
+        user_info = User.query.get_or_404(username)
+        db.session.delete(user_info)
+        db.session.commit()
+
+        flash("User has been deleted")
+        return redirect("/")
+
+@app.route("/users/<username>/feedback/add", methods=["GET", "POST"])
+def add_feedback(username):
+    """ adds feedback. """
+
+    if "username" not in session:
+        flash("You must login first!")
+        return redirect("/")
+    else:
+        user_info = User.query.get_or_404(username)
+
+        form = FeedbackForm()
+
+        if form.validate_on_submit():
+            title = form.title.data
+            content = form.content.data
+
+            new_feedback = Feedback(title=title, content=content)
+            db.session.add(new_feedback)
+            db.session.commit()
+            
+            return redirect(f"/users/{user_info.username}")
+        else:
+            return render_template("feedback.html", form=form)

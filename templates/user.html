@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% if 'username' in session %}
+
+{% block header %}<h1>Welcome {{ user_info.first_name }}!</h1>{% endblock %}
+
+{% block content %}
+<h3>Account Details</h3>
+<ul>
+  <li>First Name: {{ user_info.first_name }}</li>
+  <li>Last Name: {{ user_info.last_name }}</li>
+  <li>Email: {{ user_info.email }}</li>
+</ul>
+
+<ul>
+  {% for feedback in user_info.feedbacks %}
+  <li><a href="/feedback/{{ feedback.id }}/update">{{ feedback.title }}</a></li>
+  {% endfor %}
+</ul>
+
+<a class="btn btn-danger" href="/users/{{ user_info.username }}/delete" role="button">Delete User</a>
+
+<a class="btn btn-primary" href="/logout" role="button">Logout</a>
+{% endblock %}
+{% endif %}

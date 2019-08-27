@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %} Feedback {% endblock %}
+
+{% block header %}<h1>Edit Feedback</h1>{% endblock %}
+
+{% block content %}
+
+<form method="PATCH">
+  {% include "form.html" %}
+  <button class="btn btn-primary" type="submit">Update</button>
+  <button class="btn btn-secondary" type="submit">Cancel</button>
+</form>
+
+<br><a class="btn btn-danger" href="/feedback/{{ feedback.id }}/delete" role="button">Delete Feedback</a>
+
+{% endblock %}

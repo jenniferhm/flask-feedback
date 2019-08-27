@@ -27,13 +27,14 @@ class User(db.Model):
     last_name = db.Column(db.String(30), nullable=False)
 
     @classmethod
-    def register(cls, username, password):
+    def register(cls, username, password, email, first_name, last_name):
         """Register user w/hashed pw & return user."""
 
         hashed = bcrypt.generate_password_hash(password)
         hashed_utf8 = hashed.decode("utf8")
 
-        return cls(username=username, password=hashed_utf8)
+        return cls(username=username, password=hashed_utf8, email=email,
+                   first_name=first_name, last_name=last_name)
 
     @classmethod
     def authenticate(cls, username, pwd):
@@ -45,3 +46,19 @@ class User(db.Model):
             return u
         else:
             return False
+
+
+class Feedback(db.Model):
+    """ Feedback. """
+
+    __tablename__ = "feedbacks"
+
+    id = db.Column(db.Integer, primary_key=True,
+                   autoincrement=True)
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    username = db.Column(
+        db.String(20),
+        db.ForeignKey('users.username'))
+
+    user = db.relationship('User', backref="feedbacks")

@@ -18,4 +18,10 @@ class LoginForm(FlaskForm):
     """Form for user login."""
 
     username = StringField("Create Username", validators=[InputRequired()])
-    password = StringField("Create Password", validators=[InputRequired()])
+    password = PasswordField("Create Password", validators=[InputRequired()])
+
+class FeedbackForm(FlaskForm):
+    """Form for feedback."""
+
+    title = StringField("Add Title", validators=[InputRequired()])
+    content = TextAreaField("Add Title", validators=[InputRequired()])
