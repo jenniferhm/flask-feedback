@@ -6,12 +6,14 @@
 
 {% block content %}
 
-<form method="PATCH">
+<form method="POST">
   {% include "form.html" %}
   <button class="btn btn-primary" type="submit">Update</button>
   <button class="btn btn-secondary" type="submit">Cancel</button>
 </form>
 
-<br><a class="btn btn-danger" href="/feedback/{{ feedback.id }}/delete" role="button">Delete Feedback</a>
-
+<br>
+<form method="POST" action="/feedback/{{ feedback_info.id }}/delete">
+  <button class="btn btn-danger">Delete Feedback</button>
+</form>
 {% endblock %}

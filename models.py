@@ -57,8 +57,9 @@ class Feedback(db.Model):
                    autoincrement=True)
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    username = db.Column(
-        db.String(20),
-        db.ForeignKey('users.username'))
+    giver_name = db.Column(db.String(20),
+                           nullable=False)
+    receiver_name = db.Column(db.String(20),
+                              db.ForeignKey("users.username"))
 
     user = db.relationship('User', backref="feedbacks")

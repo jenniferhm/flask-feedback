@@ -14,14 +14,16 @@
   <li>Email: {{ user_info.email }}</li>
 </ul>
 
+<h5>Feedback History:</h5>
 <ul>
   {% for feedback in user_info.feedbacks %}
   <li><a href="/feedback/{{ feedback.id }}/update">{{ feedback.title }}</a></li>
   {% endfor %}
 </ul>
+<a class="btn btn-primary" href="/users/{{ user_info.username }}/feedback/add" role="button">Add Feedback</a><br>
 
-<a class="btn btn-danger" href="/users/{{ user_info.username }}/delete" role="button">Delete User</a>
+<br><a class="btn btn-danger" href="/users/{{ user_info.username }}/delete" role="button">Delete User</a>
 
-<a class="btn btn-primary" href="/logout" role="button">Logout</a>
+<a class="btn btn-info" href="/logout" role="button">Logout</a>
 {% endblock %}
 {% endif %}
